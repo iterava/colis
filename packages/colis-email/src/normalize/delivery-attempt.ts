@@ -5,14 +5,15 @@ export function normalizeDeliveryAttempt(input: {
   attemptId: string;
   deliveryId: string;
   outcome: ProviderDispatchOutcome;
-  occurredAt: string;
+  startedAt: string;
+  completedAt: string;
 }): DeliveryAttempt {
   return {
     attemptId: input.attemptId,
     deliveryId: input.deliveryId,
     status: input.outcome.status,
-    startedAt: input.occurredAt,
-    completedAt: input.occurredAt,
+    startedAt: input.startedAt,
+    completedAt: input.completedAt,
     externalReference: input.outcome.externalReference,
     error: input.outcome.error,
   };
