@@ -24,10 +24,13 @@ jobs:
         run: vp install
 
       - name: Check formatting, lint, and types
-        run: vp check
+        run: vp run -w check
 
       - name: Run tests
-        run: vp test
+        run: vp run -w test
 
-      - name: Build package
-        run: vp pack
+      - name: Build packages
+        run: vp run -w build
+
+      - name: Smoke packed tarballs
+        run: vp run -w smoke:tarballs

@@ -1,8 +1,12 @@
 node_modules
 dist
+coverage
 *.log
 .DS_Store
 
 # Vite+ local state
 node_modules/
 .pnpm-store/
+.tmp/
+packages/*/dist/
+packages/*/coverage/

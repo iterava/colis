@@ -1,0 +1,46 @@
+{
+  "name": "@iterava/colis",
+  "version": "0.1.0",
+  "description": "Programmable delivery infrastructure for modern applications.",
+  "homepage": "https://github.com/iterava/colis#readme",
+  "bugs": {
+    "url": "https://github.com/iterava/colis/issues"
+  },
+  "license": "MIT",
+  "author": "Iterava",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iterava/colis.git",
+    "directory": "packages/colis"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "test": "vp test",
+    "check": "vp check",
+    "pack:dry-run": "vp pm pack -- --dry-run",
+    "prepack": "vp run build"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@typescript/native-preview": "7.0.0-dev.20260316.1",
+    "bumpp": "^11.0.1",
+    "typescript": "^5.9.3",
+    "vite-plus": "^0.1.11"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
