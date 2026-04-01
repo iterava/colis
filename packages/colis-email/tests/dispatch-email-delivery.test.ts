@@ -197,3 +197,40 @@ test("wraps unexpected provider throws without leaking provider diagnostics into
     details: { provider: "test-provider" },
   });
 });
+
+test("generates unique fallback attempt and event ids for repeated dispatches", async () => {
+  const provider = createResendEmailProvider({
+    transport: {
+      async sendEmail() {
+        return { id: "re_repeat" };
+      },
+    },
+  });
+  const prepared = prepareEmailDelivery(
+    {
+      target: {
+        to: ["user@example.com"],
+      },
+      content: {
+        subject: "Repeated dispatch",
+        text: "hello",
+      },
+    },
+    {
+      createDeliveryId: () => "del_repeat",
+      now: () => new Date("2026-03-25T14:08:00.000Z"),
+    },
+  );
+
+  const first = await dispatchEmailDelivery(prepared, provider, {
+    now: () => new Date("2026-03-25T14:09:00.000Z"),
+  });
+  const second = await dispatchEmailDelivery(prepared, provider, {
+    now: () => new Date("2026-03-25T14:09:00.000Z"),
+  });
+
+  expect(first.attempt.attemptId).not.toBe(second.attempt.attemptId);
+  expect(first.events[0]?.eventId).not.toBe(second.events[0]?.eventId);
+  expect(first.attempt.deliveryId).toBe("del_repeat");
+  expect(second.attempt.deliveryId).toBe("del_repeat");
+});
