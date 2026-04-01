@@ -33,7 +33,12 @@
     "test:integration:resend": "vp test tests/resend.integration.test.ts",
     "check": "vp check",
     "pack:dry-run": "vp pm pack -- --dry-run",
-    "prepack": "vp run build"
+    "prepack": "vp run build",
+    "prebuild": "pnpm --filter @iterava/colis build",
+    "precheck": "pnpm --filter @iterava/colis build",
+    "pretest": "pnpm --filter @iterava/colis build",
+    "pretest:integration:resend": "pnpm --filter @iterava/colis build",
+    "prepack:dry-run": "pnpm --filter @iterava/colis build"
   },
   "dependencies": {
     "@iterava/colis": "workspace:^"
