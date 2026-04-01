@@ -10,7 +10,10 @@ import {
 import type { EmailProviderAdapter, ProviderDispatchInput } from "../types.ts";
 
 export interface ResendTransport {
-  sendEmail(request: ResendSendEmailRequest): Promise<ResendSendEmailResponse>;
+  sendEmail(
+    request: ResendSendEmailRequest,
+    options?: { idempotencyKey?: string },
+  ): Promise<ResendSendEmailResponse>;
 }
 
 export interface ResendEmailProviderOptions {
@@ -28,10 +31,13 @@ export function createResendEmailProvider(
     provider: providerName,
     async dispatch(input: ProviderDispatchInput) {
       const request = toResendSendEmailRequest(input);
-      const observedAt = (options.now ?? (() => new Date()))().toISOString();
+      const now = options.now ?? (() => new Date());
 
       try {
-        const response = await options.transport.sendEmail(request);
+        const response = await options.transport.sendEmail(request, {
+          idempotencyKey: input.idempotencyKey,
+        });
+        const observedAt = now().toISOString();
 
         return normalizeResendSendEmailResponse(response, {
           provider: providerName,
@@ -40,6 +46,8 @@ export function createResendEmailProvider(
           response,
         });
       } catch (error) {
+        const observedAt = now().toISOString();
+
         return normalizeResendSendEmailError(asResendLikeError(error), {
           provider: providerName,
           observedAt,
