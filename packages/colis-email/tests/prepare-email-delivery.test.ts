@@ -87,7 +87,7 @@ test("uses default preparation values and drops empty optional content", () => {
   );
 
   expect(prepared).toEqual({
-    deliveryId: "email_20260326T000001234Z",
+    deliveryId: expect.stringMatching(/^email_20260326T000001234Z_[0-9a-f-]{36}$/),
     channel: "email",
     normalizedTarget: {
       to: [{ email: "primary@example.com" }, { email: "second@example.com" }],
@@ -109,6 +109,42 @@ test("uses default preparation values and drops empty optional content", () => {
     idempotencyKey: undefined,
     preparedAt: "2026-03-26T00:00:01.234Z",
   });
+});
+
+test("generates unique fallback delivery ids for repeated preparation in the same millisecond", () => {
+  const first = prepareEmailDelivery(
+    {
+      target: {
+        to: ["user@example.com"],
+      },
+      content: {
+        subject: "Defaults",
+        text: "Hello",
+      },
+    },
+    {
+      now: () => new Date("2026-03-26T00:00:01.234Z"),
+    },
+  );
+
+  const second = prepareEmailDelivery(
+    {
+      target: {
+        to: ["user@example.com"],
+      },
+      content: {
+        subject: "Defaults",
+        text: "Hello",
+      },
+    },
+    {
+      now: () => new Date("2026-03-26T00:00:01.234Z"),
+    },
+  );
+
+  expect(first.deliveryId).not.toBe(second.deliveryId);
+  expect(first.deliveryId).toMatch(/^email_20260326T000001234Z_[0-9a-f-]{36}$/);
+  expect(second.deliveryId).toMatch(/^email_20260326T000001234Z_[0-9a-f-]{36}$/);
 });
 
 test("rejects requests with an empty target.to list after normalization", () => {

@@ -29,7 +29,9 @@ export function prepareEmailDelivery(
 ): PreparedEmailDelivery {
   const coreRequest = toCoreEmailDeliveryRequest(request);
   const preparedAt = (options.now ?? (() => new Date()))().toISOString();
-  const deliveryId = options.createDeliveryId?.() ?? `email_${preparedAt.replaceAll(/[-:.]/g, "")}`;
+  const deliveryId =
+    options.createDeliveryId?.() ??
+    `email_${preparedAt.replaceAll(/[-:.]/g, "")}_${globalThis.crypto.randomUUID()}`;
   const normalizedTarget = normalizeTarget(coreRequest.target);
   const preparedPayload = normalizeContent(coreRequest.payload);
 
