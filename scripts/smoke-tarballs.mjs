@@ -143,7 +143,7 @@ console.log(`Tarball smoke passed in ${smokeDir}`);
 function packPackage(packageName) {
   const before = new Set(fs.readdirSync(artifactsDir));
 
-  run("vp", ["pm", "pack", "--filter", packageName, "--pack-destination", artifactsDir], {
+  run("vp", ["pm", "pack", "--", "--filter", packageName, "--pack-destination", artifactsDir], {
     cwd: rootDir,
   });
 
