@@ -24,7 +24,8 @@ export async function dispatchEmailDelivery(
   provider: EmailProviderAdapter,
   options: DispatchEmailDeliveryOptions = {},
 ): Promise<DispatchEmailDeliveryResult> {
-  const occurredAt = (options.now ?? (() => new Date()))().toISOString();
+  const now = options.now ?? (() => new Date());
+  const startedAt = now().toISOString();
   const attemptId =
     options.createAttemptId?.() ??
     `${prepared.deliveryId}_attempt_${provider.provider}_${globalThis.crypto.randomUUID()}`;
@@ -47,18 +48,21 @@ export async function dispatchEmailDelivery(
     });
   }
 
+  const completedAt = now().toISOString();
+
   return {
     attempt: normalizeDeliveryAttempt({
       attemptId,
       deliveryId: prepared.deliveryId,
       outcome,
-      occurredAt,
+      startedAt,
+      completedAt,
     }),
     receipt: normalizeDeliveryReceipt({
       attemptId,
       deliveryId: prepared.deliveryId,
       outcome,
-      occurredAt,
+      occurredAt: completedAt,
     }),
     events: Object.freeze([
       normalizeDeliveryEvent({
@@ -66,7 +70,7 @@ export async function dispatchEmailDelivery(
         attemptId,
         deliveryId: prepared.deliveryId,
         outcome,
-        occurredAt,
+        occurredAt: completedAt,
       }),
     ]),
     outcome,

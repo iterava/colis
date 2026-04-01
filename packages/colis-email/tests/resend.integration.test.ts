@@ -31,24 +31,29 @@ test.skipIf(!enabled)(
       process.env.COLIS_EMAIL_INTEGRATION_SUBJECT_PREFIX ?? "[colis-email integration]";
     const apiBaseUrl = process.env.COLIS_EMAIL_INTEGRATION_RESEND_API_BASE_URL;
 
-    const prepared = prepareEmailDelivery({
-      target: {
-        from,
-        to: [to],
-      },
-      content: {
-        subject: `${subjectPrefix} ${deliveryId}`,
-        text: `colis-email resend integration test\n\ndeliveryId=${deliveryId}`,
-        headers: {
-          "X-Colis-Email-Integration": "1",
+    const prepared = prepareEmailDelivery(
+      {
+        target: {
+          from,
+          to: [to],
         },
-        tags: ["colis-email-integration"],
+        content: {
+          subject: `${subjectPrefix} ${deliveryId}`,
+          text: `colis-email resend integration test\n\ndeliveryId=${deliveryId}`,
+          headers: {
+            "X-Colis-Email-Integration": "1",
+          },
+          tags: ["colis-email-integration"],
+        },
+        metadata: {
+          test: "resend-integration",
+        },
+        idempotencyKey,
       },
-      metadata: {
-        test: "resend-integration",
+      {
+        createDeliveryId: () => deliveryId,
       },
-      idempotencyKey,
-    });
+    );
     const provider = createResendEmailProvider({
       transport: createRealResendTransport({
         apiKey: process.env.COLIS_EMAIL_INTEGRATION_RESEND_API_KEY!,
