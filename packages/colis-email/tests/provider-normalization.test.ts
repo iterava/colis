@@ -296,3 +296,74 @@ test("rejects resend provider dispatches when the transport throws a non-Error v
     },
   });
 });
+
+test("records resend provider outcome timestamps after dispatch completes", async () => {
+  const provider = createResendEmailProvider({
+    now: () => new Date("2026-03-26T00:12:02.000Z"),
+    transport: {
+      async sendEmail() {
+        return { id: "re_observed" };
+      },
+    },
+  });
+
+  const result = await provider.dispatch({
+    deliveryId: "del_900",
+    channel: "email",
+    normalizedTarget: {
+      to: [{ email: "user@example.com" }],
+      cc: [],
+      bcc: [],
+      from: undefined,
+      replyTo: [],
+    },
+    preparedPayload: {
+      subject: "Hello",
+      html: undefined,
+      text: "hello",
+      headers: {},
+      tags: [],
+    },
+    metadata: undefined,
+    preparedAt: "2026-03-26T00:12:00.000Z",
+  });
+
+  expect(result.acceptedAt).toBe("2026-03-26T00:12:02.000Z");
+});
+
+test("forwards per-delivery idempotency keys to the resend transport", async () => {
+  let observedIdempotencyKey: string | undefined;
+  const provider = createResendEmailProvider({
+    transport: {
+      async sendEmail(_request, options) {
+        observedIdempotencyKey = options?.idempotencyKey;
+        return { id: "re_idempotent" };
+      },
+    },
+  });
+
+  const result = await provider.dispatch({
+    deliveryId: "del_901",
+    channel: "email",
+    normalizedTarget: {
+      to: [{ email: "user@example.com" }],
+      cc: [],
+      bcc: [],
+      from: undefined,
+      replyTo: [],
+    },
+    preparedPayload: {
+      subject: "Hello",
+      html: undefined,
+      text: "hello",
+      headers: {},
+      tags: [],
+    },
+    metadata: undefined,
+    idempotencyKey: "idem_901",
+    preparedAt: "2026-03-26T00:12:00.000Z",
+  });
+
+  expect(observedIdempotencyKey).toBe("idem_901");
+  expect(result.externalReference).toBe("re_idempotent");
+});

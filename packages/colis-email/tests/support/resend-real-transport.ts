@@ -14,13 +14,18 @@ export function createRealResendTransport(options: RealResendTransportOptions): 
   const apiBaseUrl = options.apiBaseUrl ?? "https://api.resend.com";
 
   return {
-    async sendEmail(request: ResendSendEmailRequest): Promise<ResendSendEmailResponse> {
+    async sendEmail(
+      request: ResendSendEmailRequest,
+      transportOptions?: { idempotencyKey?: string },
+    ): Promise<ResendSendEmailResponse> {
       const response = await fetch(`${apiBaseUrl}/emails`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${options.apiKey}`,
           "Content-Type": "application/json",
-          ...(options.idempotencyKey ? { "Idempotency-Key": options.idempotencyKey } : {}),
+          ...((transportOptions?.idempotencyKey ?? options.idempotencyKey)
+            ? { "Idempotency-Key": transportOptions?.idempotencyKey ?? options.idempotencyKey }
+            : {}),
         },
         body: JSON.stringify(request),
       });
