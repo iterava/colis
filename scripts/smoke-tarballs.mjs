@@ -54,7 +54,7 @@ writeJson(path.join(smokeDir, "package.json"), {
   },
 });
 
-run("pnpm", ["install"], { cwd: smokeDir, env: { ...process.env, CI: "1" } });
+run("vp", ["install"], { cwd: smokeDir, env: { ...process.env, CI: "1" } });
 
 fs.writeFileSync(
   path.join(smokeDir, "runtime-smoke.mjs"),
@@ -143,7 +143,7 @@ console.log(`Tarball smoke passed in ${smokeDir}`);
 function packPackage(packageName) {
   const before = new Set(fs.readdirSync(artifactsDir));
 
-  run("pnpm", ["--filter", packageName, "pack", "--pack-destination", artifactsDir], {
+  run("vp", ["pm", "pack", "--filter", packageName, "--pack-destination", artifactsDir], {
     cwd: rootDir,
   });
 
