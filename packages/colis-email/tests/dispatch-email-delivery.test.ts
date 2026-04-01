@@ -234,3 +234,39 @@ test("generates unique fallback attempt and event ids for repeated dispatches", 
   expect(first.attempt.deliveryId).toBe("del_repeat");
   expect(second.attempt.deliveryId).toBe("del_repeat");
 });
+
+test("records completion timestamps after provider dispatch finishes", async () => {
+  const provider = createResendEmailProvider({
+    transport: {
+      async sendEmail() {
+        return { id: "re_timing" };
+      },
+    },
+  });
+  const prepared = prepareEmailDelivery(
+    {
+      target: {
+        to: ["user@example.com"],
+      },
+      content: {
+        subject: "Dispatch timing",
+        text: "hello",
+      },
+    },
+    {
+      createDeliveryId: () => "del_timing",
+      now: () => new Date("2026-03-25T14:10:00.000Z"),
+    },
+  );
+
+  const times = [new Date("2026-03-25T14:11:00.000Z"), new Date("2026-03-25T14:11:02.000Z")];
+
+  const result = await dispatchEmailDelivery(prepared, provider, {
+    now: () => times.shift() ?? new Date("2026-03-25T14:11:02.000Z"),
+  });
+
+  expect(result.attempt.startedAt).toBe("2026-03-25T14:11:00.000Z");
+  expect(result.attempt.completedAt).toBe("2026-03-25T14:11:02.000Z");
+  expect(result.receipt.updatedAt).toBe("2026-03-25T14:11:02.000Z");
+  expect(result.events[0]?.occurredAt).toBe("2026-03-25T14:11:02.000Z");
+});
