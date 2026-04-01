@@ -34,11 +34,11 @@
     "check": "vp check",
     "pack:dry-run": "vp pm pack -- --dry-run",
     "prepack": "vp run build",
-    "prebuild": "pnpm --filter @iterava/colis build",
-    "precheck": "pnpm --filter @iterava/colis build",
-    "pretest": "pnpm --filter @iterava/colis build",
-    "pretest:integration:resend": "pnpm --filter @iterava/colis build",
-    "prepack:dry-run": "pnpm --filter @iterava/colis build"
+    "prebuild": "vp run -F @iterava/colis build",
+    "precheck": "vp run -F @iterava/colis build",
+    "pretest": "vp run -F @iterava/colis build",
+    "pretest:integration:resend": "vp run -F @iterava/colis build",
+    "prepack:dry-run": "vp run -F @iterava/colis build"
   },
   "dependencies": {
     "@iterava/colis": "workspace:^"
