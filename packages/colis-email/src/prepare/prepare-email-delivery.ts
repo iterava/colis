@@ -91,11 +91,7 @@ function normalizeContent(content: EmailRequest["content"]): NormalizedEmailCont
     html,
     text,
     headers: Object.freeze({ ...content.headers }),
-    tags: Object.freeze(
-      dedupe(content.tags ?? [])
-        .map((tag) => tag.trim())
-        .filter(Boolean),
-    ),
+    tags: Object.freeze(dedupe((content.tags ?? []).map((tag) => tag.trim()).filter(Boolean))),
   };
 }
 

@@ -26,7 +26,8 @@ export async function dispatchEmailDelivery(
 ): Promise<DispatchEmailDeliveryResult> {
   const occurredAt = (options.now ?? (() => new Date()))().toISOString();
   const attemptId =
-    options.createAttemptId?.() ?? `${prepared.deliveryId}_attempt_${provider.provider}`;
+    options.createAttemptId?.() ??
+    `${prepared.deliveryId}_attempt_${provider.provider}_${globalThis.crypto.randomUUID()}`;
 
   let outcome: ProviderDispatchOutcome;
 
