@@ -12,6 +12,18 @@ Most application users should start with `@iterava/colis-email`. This package is
 - provider-neutral delivery status and error vocabulary
 - no email-only payload fields, provider SDK bindings, or runtime orchestration concerns
 
+## Quality Signals
+
+`@iterava/colis` is a small contract-heavy core package. Runtime statement coverage is not the primary quality metric here.
+
+For this package, the main confidence signals are:
+
+- contract and consumer-shape tests
+- package-boundary / export behavior
+- type correctness
+
+Downstream behavioral packages such as `@iterava/colis-email` are the place where runtime coverage targets are more meaningful.
+
 ## Development
 
 ```bash

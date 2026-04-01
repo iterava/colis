@@ -5,6 +5,7 @@ export default defineConfig({
     coverage: {
       provider: "custom",
       customProviderModule: "./tests/support/vite-plus-coverage-provider.ts",
+      exclude: ["src/index.ts", "src/providers/**/index.ts", "tests/support/**"],
     },
   },
   staged: {
