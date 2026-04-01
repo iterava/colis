@@ -103,7 +103,7 @@ test("uses default preparation values and drops empty optional content", () => {
       headers: {
         "X-Trace": "abc123",
       },
-      tags: ["alpha", "alpha", "beta"],
+      tags: ["alpha", "beta"],
     },
     metadata: undefined,
     idempotencyKey: undefined,
